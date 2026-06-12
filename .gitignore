@@ -1,0 +1,15 @@
+# Ignorar arquivos gerados pelo Vivado
+*.jou
+*.log
+*.pb
+*.wdb
+*.str
+.Xil/
+*.cache/
+*.hw/
+*.sim/
+*.runs/
+
+# Ignorar binários e logs do VS Code
+.vscode/
+*.bit
