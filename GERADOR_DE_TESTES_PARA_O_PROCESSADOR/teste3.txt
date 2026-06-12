@@ -1,0 +1,13 @@
+MOV R0, #0
+MOV R1, #1
+IN R0
+CMP R0, R1
+JGT #6
+JEQ #2
+JMP #-4
+MOV R2, #0
+OUT R2
+JMP #-7
+MOV R2, R0
+OUT R2
+JMP #-10

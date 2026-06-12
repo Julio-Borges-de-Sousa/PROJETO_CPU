@@ -1,0 +1,14 @@
+0.7
+2020.2
+Nov  8 2024
+22:36:55
+/home/julio/UFC/SD/CODIGOS/CPU/FSM.v,1780927514,verilog,,,,FSM,,,,,,,,
+/home/julio/UFC/SD/CODIGOS/CPU/MUX_2x1.v,1776178348,verilog,,,,MUX_2x1,,,,,,,,
+/home/julio/UFC/SD/CODIGOS/CPU/MUX_4X1.v,1775312980,verilog,,,,mux_4x1,,,,,,,,
+/home/julio/UFC/SD/CODIGOS/CPU/PC.v,1780329026,verilog,,,,PC,,,,,,,,
+/home/julio/UFC/SD/CODIGOS/CPU/RAM.v,1780059036,verilog,,,,RAM,,,,,,,,
+/home/julio/UFC/SD/CODIGOS/CPU/ROM.v,1780930947,verilog,,,,ROM,,,,,,,,
+/home/julio/UFC/SD/CODIGOS/CPU/ULA.v,1780333912,verilog,,,,ula,,,,,,,,
+/home/julio/UFC/SD/CODIGOS/CPU/datapath.v,1780327719,verilog,,,,datapath,,,,,,,,
+/home/julio/UFC/SD/CODIGOS/CPU/processador.v,1780920933,verilog,,,,processador,,,,,,,,
+/home/julio/UFC/SD/CODIGOS/CPU/register_file.v,1780329919,verilog,,,,register_file,,,,,,,,

@@ -1,0 +1,141 @@
+// ==============================================================================
+// INIT: Configuração inicial e Constantes dos Botões
+// ==============================================================================
+// START:
+    NOP                 // [PC: 0]  Ciclo ocioso de segurança no boot
+    OUT #0              // [PC: 1]  Zera todos os LEDs (0000)
+    
+    // R1 a R4 guardarão as máscaras de leitura dos 4 botões
+    MOV R1, #1          // [PC: 2]  (BTN 1)
+    MOV R2, #2          // [PC: 3]  (BTN 2)
+    MOV R3, #4          // [PC: 4]  (BTN 3)
+    MOV R4, #8          // [PC: 5]  (BTN 4)
+
+// ==============================================================================
+// FASE 1: ARITMÉTICA, LÓGICA E SALTOS CONDICIONAIS
+// ==============================================================================
+// WAIT_BTN1:
+    IN R0               // [PC: 6]  Lê continuamente a porta de E/S
+    CMP R0, R1          // [PC: 7]  Compara com BTN 1
+    JEQ #2              // [PC: 8]  Se R0==R1, pula para PHASE1_TEST (8 + 2 = 10)
+    JMP #-3             // [PC: 9]  Se não, volta para WAIT_BTN1 (9 - 3 = 6)
+
+// PHASE1_TEST:
+    // Aritmética
+    MOV R5, #5          // [PC: 10]
+    MOV R6, #3          // [PC: 11]
+    ADD R5, R5, R6      // [PC: 12] R5 = 8
+    SUB R5, R5, R6      // [PC: 13] R5 = 5
+    MUL R5, R5, R6      // [PC: 14] R5 = 15
+
+    // Lógica
+    MOV R6, #5          // [PC: 15] 
+    AND R5, R5, R6      // [PC: 16] 15 AND 5 = 5
+    MOV R6, #2          // [PC: 17]
+    ORR R5, R5, R6      // [PC: 18] 5 OR 2 = 7
+    NOT R6, R6          // [PC: 19] Inverte 2
+    MOV R6, #7          // [PC: 20]
+    XOR R5, R5, R6      // [PC: 21] 7 XOR 7 = 0
+
+    // Avaliação de Flags (JLT e JGT)
+    CMP R5, R1          // [PC: 22] CMP 0, 1 (Flag C=1, Z=0)
+    JLT #2              // [PC: 23] Pula para TEST_JGT (23 + 2 = 25)
+    JMP #53             // [PC: 24] Falhou: pula direto para ERROR (24 + 53 = 77)
+
+// TEST_JGT:
+    CMP R1, R5          // [PC: 25] CMP 1, 0 (Flag C=0, Z=0)
+    JGT #2              // [PC: 26] Pula para PHASE1_DONE (26 + 2 = 28)
+    JMP #50             // [PC: 27] Falhou: pula direto para ERROR (27 + 50 = 77)
+
+// PHASE1_DONE:
+    OUT #1              // [PC: 28] Acende LED M0 (0001)
+
+// ==============================================================================
+// FASE 2: PILHA E ACESSO À RAM
+// ==============================================================================
+// WAIT_BTN2:
+    IN R0               // [PC: 29]
+    CMP R0, R2          // [PC: 30] Espera o BTN 2
+    JEQ #2              // [PC: 31] Pula para PHASE2_TEST (31 + 2 = 33)
+    JMP #-3             // [PC: 32] Volta para WAIT_BTN2 (32 - 3 = 29)
+
+// PHASE2_TEST:
+    // Teste de Pilha
+    MOV R5, #42         // [PC: 33]
+    PSH R5              // [PC: 34]
+    MOV R5, #0          // [PC: 35]
+    POP R5              // [PC: 36]
+    
+    MOV R6, #42         // [PC: 37]
+    CMP R5, R6          // [PC: 38] R5 preservou o 42?
+    JEQ #2              // [PC: 39] Pula para RAM_TEST (39 + 2 = 41)
+    JMP #37             // [PC: 40] Falhou: pula para ERROR (40 + 37 = 77)
+
+// RAM_TEST:
+    MOV R6, #100        // [PC: 41] Endereço 100 da RAM
+    STR [R6], #7        // [PC: 42] Escreve 7 direto na RAM
+    LDR R5, [R6]        // [PC: 43] Puxa o 7 para R5
+    
+    MOV R0, R5          // [PC: 44]
+    MOV R5, #13         // [PC: 45]
+    STR [R6], R5        // [PC: 46] Sobrescreve RAM com 13
+    LDR R5, [R6]        // [PC: 47] Lê novamente (R5 = 13)
+
+    MOV R0, #13         // [PC: 48]
+    CMP R5, R0          // [PC: 49]
+    JEQ #2              // [PC: 50] Pula para PHASE2_DONE (50 + 2 = 52)
+    JMP #26             // [PC: 51] Falhou: pula para ERROR (51 + 26 = 77)
+
+// PHASE2_DONE:
+    OUT #2              // [PC: 52] Acende LED M1 (0010)
+
+// ==============================================================================
+// FASE 3: DESLOCAMENTOS E ROTAÇÕES 
+// ==============================================================================
+// WAIT_BTN3:
+    IN R0               // [PC: 53]
+    CMP R0, R3          // [PC: 54] Espera BTN 3
+    JEQ #2              // [PC: 55] Pula para PHASE3_TEST (55 + 2 = 57)
+    JMP #-3             // [PC: 56] Volta para WAIT_BTN3 (56 - 3 = 53)
+
+// PHASE3_TEST:
+    MOV R5, #1          // [PC: 57] 0000_0001
+    SHL R5, R5, #2      // [PC: 58] 1 << 2 = 4 (0000_0100)
+    SHR R5, R5, #1      // [PC: 59] 4 >> 1 = 2 (0000_0010)
+    
+    ROL R5, R5          // [PC: 60] Rotaciona esquerda = 4
+    ROR R5, R5          // [PC: 61] Rotaciona direita = 2
+
+    CMP R5, R2          // [PC: 62] Terminou exatamente em 2?
+    JEQ #2              // [PC: 63] Pula para PHASE3_DONE (63 + 2 = 65)
+    JMP #13             // [PC: 64] Falhou: pula para ERROR (64 + 13 = 77)
+
+// PHASE3_DONE:
+    OUT #4              // [PC: 65] Acende LED M2 (0100)
+
+// ==============================================================================
+// FASE 4: CONCLUSÃO E REINÍCIO
+// ==============================================================================
+// WAIT_BTN4:
+    IN R0               // [PC: 66]
+    CMP R0, R4          // [PC: 67] Espera BTN 4
+    JEQ #2              // [PC: 68] Pula para PHASE4_TEST (68 + 2 = 70)
+    JMP #-3             // [PC: 69] Volta para WAIT_BTN4 (69 - 3 = 66)
+
+// PHASE4_TEST:
+    MOV R5, #15         // [PC: 70]
+    OUT R5              // [PC: 71] Acende TODOS os LEDs
+
+// WAIT_RELEASE:
+    IN R0               // [PC: 72]
+    MOV R6, #0          // [PC: 73]
+    CMP R0, R6          // [PC: 74] Espera SOLTAR os botões (R0 == 0)
+    JEQ #-75            // [PC: 75] Pula para START (75 - 75 = 0)
+    JMP #-4             // [PC: 76] Volta para WAIT_RELEASE (76 - 4 = 72)
+
+// ==============================================================================
+// TRATAMENTO DE ERROS (Deadlock)
+// ==============================================================================
+// ERROR:
+    OUT #10             // [PC: 77] LEDs mostram 1010
+    JMP #-1             // [PC: 78] Laço infinito preso na própria instrução (78 - 1 = 77)

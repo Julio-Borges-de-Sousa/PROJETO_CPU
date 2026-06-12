@@ -1,0 +1,2 @@
+# PROJETO_CPU
+ Um projeto de um processador monociclo descrito em verilog + de um gerador de testes feito que possui um assembler feito em python , o gerador recebe um arquivo em assembly e converte para exadecimal, esse exa é inserido na ROM da CPU para poder rodar a aplicação desejada, a CPU ainda esta numa versão inicial mais ja consegue executar todas as instruções corretamente, futuras atualizações irão incluir, implemetação de um TIMER, uart, uso da BRAM da placa que o processador foi testado, e mais aplicações voltadas para estudo
