@@ -5,18 +5,11 @@ module PC(clk, rst, ld, Q, immed);
 
     reg [15:0] PC;
 
-    initial begin
-        PC = 0;
-    end
-
     always @(posedge clk) begin
         if(rst) PC <= 0;
-        else if(ld) PC <= PC + 16'd1; // proxima instrção normal;
-        else PC <= PC+immed; // JMPs
+        else if(ld) PC <= PC + immed; 
     end
 
     assign Q = PC;
-
 endmodule
-
 

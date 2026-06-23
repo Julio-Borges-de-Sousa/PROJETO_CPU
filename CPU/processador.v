@@ -4,11 +4,11 @@ module processador (clk, rst, led, btn);
     output [3:0] led;
     input [3:0] btn;
 
-    wire [15:0] IR_data, din, dout;
+    wire [15:0] din, dout,D,Q_IR;
     wire [15:0] immed;
     wire [3:0] ula_op;
     wire [1:0] Rf_sel, CPSR;
-    wire Rd_wr, en, ld, RAM_sel, RAM_we, ULA_B_sel, RAM_sel_addr, POP_sel, CPSR_Write_Enable, LED_ON, LED_sel;
+    wire Rd_wr, en, ld, RAM_sel, RAM_we, ULA_B_sel, RAM_sel_addr, POP_sel, CPSR_Write_Enable, LED_ON, LED_sel, IR_load;
     wire [2:0] Rd_sel, Rm_sel, Rn_sel;
     wire [15:0] Q_PC;
     wire [15:0] saida_da_ULA, RM, RN;
@@ -47,28 +47,39 @@ module processador (clk, rst, led, btn);
 
     ROM rom (
         .addr (Q_PC),
-        .dout(IR_data)
+        .dout(D)
+    );
+
+    IR ir(
+        .clk (clk),
+        .rst (rst),
+        .D (D),
+        .IR_load (IR_load),
+        .Q (Q_IR)
     );
 
     FSM fsm (
-        .IR_data (IR_data),
-        .immed (immed),
-        .Rf_sel (Rf_sel),
+        .clk (clk),
+        .rst (rst),
+        .IR_data (Q_IR),
+        .CPSR (CPSR),
+        .read (btn),
+        .LED_ON (LED_ON),
+        .LED_sel (LED_sel),
+        .CPSR_Write_Enable (CPSR_Write_Enable),
+        .PC_inc (ld),
+        .IR_load (IR_load),
+        .Immed (immed),
+        .RAM_sel (RAM_sel),
+        .RAM_we (RAM_we),
+        .RAM_sel_addr (RAM_sel_addr),
+        .RF_sel (Rf_sel),
         .Rd_sel (Rd_sel),
         .Rd_wr (Rd_wr),
         .Rm_sel (Rm_sel),
         .Rn_sel (Rn_sel),
         .ula_op (ula_op),
-        .ld (ld),
-        .read (btn),
-        .LED_ON (LED_ON),
-        .LED_sel (LED_sel),
-        .CPSR_Write_Enable(CPSR_Write_Enable),
-        .CPSR (CPSR),
-        .RAM_sel (RAM_sel),
-        .RAM_sel_addr (RAM_sel_addr),
         .ULA_B_sel (ULA_B_sel),
-        .RAM_we (RAM_we),
         .POP_sel (POP_sel)
     );
 
@@ -110,5 +121,4 @@ module processador (clk, rst, led, btn);
 
     assign led = PIN;
 endmodule
-
 
