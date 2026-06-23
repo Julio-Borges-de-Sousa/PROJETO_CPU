@@ -2,7 +2,7 @@
 open_hw_manager
 connect_hw_server
 
-# Conecta ao primeiro dispositivo encontrado (sua placa Zybo)
+# Conecta ao primeiro dispositivo encontrado (Zybo)
 open_hw_target
 set device [lindex [get_hw_devices xc7z010_1] 0]
 current_hw_device $device
