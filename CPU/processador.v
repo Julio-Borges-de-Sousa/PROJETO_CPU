@@ -1,7 +1,8 @@
-module processador (clk, rst, led, btn);
+module processador (clk, rst, led, btn, tx_pin_out);
     input clk, rst;
 
     output [3:0] led;
+    output tx_pin_out; 
     input [3:0] btn;
 
     wire [15:0] din, dout,D,Q_IR;
@@ -29,11 +30,25 @@ module processador (clk, rst, led, btn);
         
     );
 
+    wire is_uart_addr = (RM == 16'hFFE0) ? 1'b1 : 1'b0;
+    wire trigger_uart = RAM_we & is_uart_addr;
+
+    uart_tx my_uart (
+        .clk      (clk),
+        .rst      (rst),
+        .tx_start (trigger_uart),     // Pulso de 1 ciclo gerado pelo STR
+        .tx_data  (RN[7:0]),          // Os 8 bits menos significativos do registrador de dados
+        .tx_pin   (tx_pin_out)       // Vai pro pino físico da FPGA       
+    );
+
+
+    wire ram_we_real = RAM_we & (~is_uart_addr);
+
     RAM ram (
         .clk (clk),
         .din (din),
         .addr (addr),
-        .we (RAM_we),
+        .we (ram_we_real),
         .dout (dout)
     );
 
